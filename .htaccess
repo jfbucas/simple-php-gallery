@@ -1,0 +1,8 @@
+DirectoryIndex sp_index.php
+
+RewriteEngine On 
+
+RewriteBase /Galleries
+RewriteRule ^folder/(.*) sp_index.php?dir=./$1
+RewriteRule ^file/(.*) sp_index.php?file=./$1
+RewriteRule ^thumb/(.*) sp_getthumb.php?source=$1

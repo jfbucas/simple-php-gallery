@@ -1,0 +1,146 @@
+html {
+	background:#fff;
+}
+body {
+	/*-moz-border-radius:20px;*/
+	font:12px verdana, sans-serif;
+	margin:15px;
+	background:#eee;
+	color:#666;
+	border:1px solid #bbb;
+}
+a:link {
+	color: #577058;
+}
+a:visited {
+	color: #333;
+}
+a:hover, a:active, a:focus {
+	color: #bbcbbc;
+}
+h1 {
+	/*-moz-border-radius:20px 20px 0 0;*/
+	font:bold 18px Georgia, garamond, times, serif;
+	margin:0;
+	padding:2px 0 2px 10px;
+	background:#036;
+	color:#fff;
+}
+#prev, #next {
+	display:block;
+	padding:5px;
+	border:1px solid #bbb;
+	/*-moz-border-radius:5px;*/
+	background:#ddd;
+	text-decoration:none;
+	margin:0 10px 10px;
+}
+html body div #prev:hover, html body #next:hover {
+	border-color:#888;
+	background:#ccc;
+	color:#000;
+}
+#prev {
+	float:left;
+}
+#next {
+	float:right;
+}
+#image {
+	text-align:center;	
+}
+.imgwrapper {
+	float: left;
+	margin: 0 0 15px 25px;
+	padding: 2px;
+	height:113px;
+}
+.imgwrapper span {
+	display:block;
+	font:9px verdana, sans-serif;
+	text-align:center;	
+}
+.imgwrapper img {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	/*-moz-border-radius:5px;*/
+	padding: 4px;
+}
+.imgwrapper a:visited img {
+	background-color:#fff;	
+}
+.imgwrapper a:hover img, .imgwrapper a:focus img {
+	background-color: #036;
+}
+.imgwrapper a:hover, .imgwrapper a:focus {
+	color:#000;
+}
+#single {
+	padding:3px;
+	border:1px solid #aaa;
+	/*-moz-border-radius:5px;*/
+	background:#ddd;
+}
+#desc {
+	border-color:#ddd;
+	border-style:solid;
+	border-width:1px;
+	text-align:center;
+	clear:both;
+	margin:5px 40px;
+	padding:5px;
+}
+#credit {
+	background:#036;
+	border-top:4px solid #333;
+	/*-moz-border-radius:0 0 20px 20px;*/
+	color:#fff;
+	font-size:9px;
+	text-align:center;
+	margin:10px 0 0;
+	padding:3px 0;
+	clear:both;
+}
+#credit a {
+	color:#fff;
+}
+#directories, #breadcrumb {
+	border-bottom:1px solid #ddd;
+	margin:0;
+}
+#breadcrumb {
+	padding:5px;
+	border-bottom:1px solid #ddd;
+	background:#666;
+	color:#fff;
+	margin-bottom:10px;
+}
+#breadcrumb a, #breadcrumb a:hover, #breadcrumb a:active {
+	color:#fff;
+}
+#dirdesc {
+	padding:4px;
+	border-bottom:1px solid #ddd;	
+}
+#gallery {
+	margin:10px 5px 5px;
+}
+#directories ul {
+	list-style:circle;
+	padding-bottom:5px;
+}
+#directories li {
+	margin:2px 0;
+}
+#directories h2 {
+	font:14px georgia, garamond, times, serif;
+	font-weight:bold;
+	text-indent:15px;
+	margin:0;
+}
+#directories h3 {
+	font:12px georgia, garamond, times, serif;
+	font-weight:bold;
+	text-indent:20px;
+	margin:0;
+}
