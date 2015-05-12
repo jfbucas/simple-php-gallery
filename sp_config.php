@@ -23,7 +23,8 @@ $cacheresizedfolder = 'rcache';
 $precache = true;
 
 //Folder Hiding
-$hide_folders[] = 'cgi-bin';
+$hide_folders[] = $cachefolder;
+$hide_folders[] = $cacheresizedfolder;
 
 //Miscellaneous Settings
 $showfolderdetails = true;

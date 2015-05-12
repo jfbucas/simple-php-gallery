@@ -73,9 +73,8 @@ $current_working_directory = $parts['dirinfo'];
 
 $hide_folders[] = '.';
 $hide_folders[] = '..';
-$hide_folders[] = $cachefolder;
-$hide_folders[] = $cacheresizedfolder;
 $hide_folders[] = '.git';
+$hide_folders[] = 'cgi-bin';
 
 //If a directory list request was made, parse it into the dir variable.
 $dir='.';
