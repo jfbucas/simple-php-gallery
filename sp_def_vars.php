@@ -186,7 +186,7 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file'])))
 			$imglink[] = $link;
 		}
 		//IF THE CURRENT ITEM IS A DIRECTORY, ADD THE LINK TEXT TO THE $dirlink ARRAY
-		else if(is_dir($path) && !in_array($file, $hide_folders))
+		else if(is_dir($path) && !in_array($file, $hide_folders) && ($file != ".git"))
 		{
 			if($descriptions[$file]['title'] != '')
 				$file = $descriptions[$file]['title'];
@@ -216,10 +216,10 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file'])))
 				}				
 			}
 			$dirlink[$file] = $dir_string;
-			uksort($dirlink, "strnatcasecmp");
-			$dirlink = array_reverse($dirlink);
 		}
 		//IF THE CURRENT ITEM IS NOT AN IMAGE AND IS NOT A DIRECTORY, IGNORE IT
 	}
+    uksort($dirlink, "strnatcasecmp");
+    $dirlink = array_reverse($dirlink);
 }
 ?>
