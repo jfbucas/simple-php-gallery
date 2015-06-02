@@ -1,4 +1,31 @@
 <?php
+
+function isImage($file) {
+    return preg_match("/.*(\.jpg|\.gif|\.png|\.jpeg)/", $file);
+}
+
+function getTitle($file) {
+    global $descriptions;
+    
+    $my_title = $file;
+    if(array_key_exists($file, $descriptions))
+        if(array_key_exists('title', $descriptions[$file]))
+            $my_title = $descriptions[$file]['title'];
+
+    return $my_title;
+}
+
+function getDescription($file) {
+    global $descriptions;
+    
+    $description = '';
+    if(array_key_exists($file, $descriptions))
+        if(array_key_exists('desc', $descriptions[$file]))
+            $description = $descriptions[$file]['desc'];
+
+    return $description;
+}
+
 //This function will return a sorted array of all files and folders in the
 //current directory
 function getDirList($input_dir="") {
@@ -28,11 +55,8 @@ function getImgLinks() {
 
 function getDirDescription() {
     global $dir;
-    global $descriptions;
-
     $path = explode('/',$dir);
-    $description = $descriptions[$path[count($path)-1]]['desc'];
-    return $description;
+    return getDescription($path[count($path)-1]);
 }
 
 //This function generates the sub-directory links for the current directory.
@@ -91,12 +115,14 @@ function gd_version() {
 
 function getFile() {
     global $display_file, $resize_file, $maxwidth, $maxheight;
-    global  $resize, $cacheresizedfolder, $cacheresized;
+    global $resize, $cacheresizedfolder, $cacheresized;
+    global $current;
+
     $cached_img = $cacheresizedfolder
         . "/"
         . md5(substr($resize_file,2,strlen($resize_file)-2))
         . ".jpg";
-    $path = pathinfo($_SERVER[PHP_SELF]);
+    $path = pathinfo($_SERVER['PHP_SELF']);
     $path = $path['dirname'];
     if($path == '/')
         $path = '';
@@ -125,8 +151,7 @@ function getFile() {
             else
                 echo $path . "/sp_resize.php?source=" . $resize_file;
         }
-        echo '" alt="';
-        getDescription();
+        echo '" alt="' . getDescription($current);
         if(function_exists('imagecreate') && $maxwidth > 0 && $maxheight > 0 && $resize)
             echo '" title="Cliquez pour voir en grand" /></a>';
         else
@@ -157,18 +182,9 @@ function getFile() {
     }
 }
 
-function getDescription() {
-    global $descriptions, $current;
-    echo $descriptions[$current]["desc"];
-}
-
 function descriptionExists() {
-    global $descriptions;
     global $current;
-    $exists = false;
-    if($descriptions[$current]["desc"] != '')
-        $exists = true;
-    return $exists;
+    return (getDescription($current) != '');
 }
 
 function sizeMatches($image, $size='thumb') {
@@ -265,32 +281,37 @@ function rmdirr($dirname) {
 function cacheLinkMatch($hash) {
     global $cache_ini, $cachethumbs, $modrewrite;
     $match = false;
-    if($modrewrite && !eregi('sp_',$cache_ini[$hash]['url']))
-        $match = true;
-    if(!$modrewrite && eregi('sp_',$cache_ini[$hash]['url']))
-        $match = true;
+    if(array_key_exists($hash, $cache_ini))
+    {
+        if($modrewrite && !strpos($cache_ini[$hash]['url'], 'sp_'))
+            $match = true;
+        if(!$modrewrite && strpos($cache_ini[$hash]['url'], 'sp_'))
+            $match = true;
+    }
     return $match;
 }
 
 function cacheFilesizeMatch($hash, $filesize) {
     global $cache_ini;
     $match = false;
-    if($filesize == $cache_ini[$hash]['size'])
-        $match = true;
+    if(array_key_exists($hash, $cache_ini))
+        if($filesize == $cache_ini[$hash]['size'])
+            $match = true;
     return $match;
 }
 
 function resizedCacheFilesizeMatch($hash, $filesize) {
     global $resized_cache_ini;
     $match = false;
-    if($filesize == $resized_cache_ini[$hash]['size'])
-        $match = true;
+    if(array_key_exists($hash, $resized_cache_ini))
+        if($filesize == $resized_cache_ini[$hash]['size'])
+            $match = true;
     return $match;
 }
 
 function getPrevAndNextDir() {
     global $modrewrite, $precache, $resize;
-    if ($_GET['dir'] == "")
+    if(!array_key_exists('dir', $_GET))
         return;
 
     $files = getDirList('./' . dirname($_GET['dir']) . '/');
@@ -382,7 +403,7 @@ function getPrevAndNext() {
     $files = getDirList('./' . dirname($_GET['file']) . '/');
 
     foreach($files as $img) {
-        if(eregi(".*(\.jpg|\.gif|\.png|\.jpeg)", $img))
+        if(isImage($img))
             $imgfiles[] = $img;
     }
 
@@ -464,7 +485,6 @@ function getPrevAndNext() {
 //This function generates the breadcrumb trail displayed at the top of the page.
 //It returns void.
 function getBreadCrumbs() {
-    global $descriptions;
     global $dir;
     global $display_file;
     global $current_working_directory;
@@ -496,11 +516,8 @@ function getBreadCrumbs() {
         echo " accesskey=\"u\"";
     echo ">" . $title . "</a> ";
     foreach($patharr as $folder) {
-        if($descriptions[$folder]['title'] != '')
-            $foldername = $descriptions[$folder]['title'];
-        else
-            $foldername = $folder;
-        if(!eregi('^\.',$folder)) {
+        $foldername = getTitle($folder);
+        if(!(substr($folder, 0, 1) == '.')) {
             $linkpath .= "/$folder";
             if($patharr[count($patharr)-1] != $folder) {
                 if($modrewrite) {
@@ -522,20 +539,9 @@ function getBreadCrumbs() {
                     echo ">$foldername</a> ";
                 }
             }
-            else if($patharr[count($patharr)-1] == '')
-                ;
-            else {
-                if($nodir) {
-                    if($descriptions[$folder]['title'] != '')
-                        echo "&raquo; <strong>"
-                            . $descriptions[$folder]['title']
-                            . "</strong>";
-                    else
-                        echo "&raquo; <strong>$folder</strong>";
-                }
-                else
+            else 
+                if( ! ($patharr[count($patharr)-1] == ''))
                     echo "&raquo; <strong>$foldername</strong>";
-            }
         }
         $counter++;
     }
@@ -544,7 +550,7 @@ function getBreadCrumbs() {
 function getNumImages($dir) {
     $num_images = 0;
     foreach(getDirList($dir) as $file) {
-        if( eregi(".*(\.jpg|\.gif|\.png|\.jpeg)", $file)) {
+        if( isImage($file)) {
             $num_images++;
         }
     }
@@ -552,6 +558,7 @@ function getNumImages($dir) {
 }
 
 function getNumDir($directory) {
+    global $cachefolder;
     $num_dir = 0;
     foreach(getDirList($directory) as $item) {
         $path = $directory . '/' . $item;
@@ -566,25 +573,26 @@ function getNumDir($directory) {
 }
 
 function write_ini_file($path, $assoc_array) {
-   foreach ($assoc_array as $key => $item) {
-       if (is_array($item)) {
-           $content .= "\n[$key]\n";
-           foreach ($item as $key2 => $item2) {
-               $content .= "$key2 = \"$item2\"\n";
-           }
-       }
-       else {
-           $content .= "$key = \"$item\"\n";
-       }
-   }
+    $content = '';
+    foreach ($assoc_array as $key => $item) {
+        if (is_array($item)) {
+            $content .= "\n[$key]\n";
+            foreach ($item as $key2 => $item2) {
+                $content .= "$key2 = \"$item2\"\n";
+            }
+        }
+        else {
+            $content .= "$key = \"$item\"\n";
+        }
+    }
 
-   if (!$handle = fopen($path, 'w')) {
-       return false;
-   }
-   if (!fwrite($handle, $content)) {
-       return false;
-   }
-   fclose($handle);
-   return true;
+    if (!$handle = fopen($path, 'w')) {
+        return false;
+    }
+    if (!fwrite($handle, $content)) {
+        return false;
+    }
+    fclose($handle);
+    return true;
 }
 ?>

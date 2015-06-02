@@ -1,5 +1,6 @@
 <?php
 require('sp_config.php');
+require('sp_helper_functions.php');
 
 $source = stripslashes($_GET['source']);
 $path = pathinfo($source);
@@ -70,9 +71,9 @@ if($cachethumbs) {
         $url = $thisfolder . 'sp_index.php?file=' . $source;
 
     $cache_ini[$hash]['src'] = $thisfolder . $cachefolder . '/' . $hash . '.jpg';
-    $cache_ini[$hash]['alt'] = $descriptions[$path['basename']]['desc'];
+    $cache_ini[$hash]['alt'] = getDescription($path['basename']);
     $cache_ini[$hash]['url'] = $url;
-    $cache_ini[$hash]['title'] = $descriptions[$path['basename']]['title'];
+    $cache_ini[$hash]['title'] = getTitle($path['basename']);
     $cache_ini[$hash]['size'] = filesize($source);
     write_ini_file($cachefolder . "/cache.ini", $cache_ini);
 }
@@ -81,26 +82,4 @@ if($cachethumbs) {
 imagejpeg($thumb);
 imagedestroy($thumb);
 
-function write_ini_file($path, $assoc_array) {
-   foreach ($assoc_array as $key => $item) {
-       if (is_array($item)) {
-           $content .= "\n[$key]\n";
-           foreach ($item as $key2 => $item2) {
-               $content .= "$key2 = \"$item2\"\n";
-           }
-       }
-       else {
-           $content .= "$key = \"$item\"\n";
-       }
-   }
-
-   if (!$handle = fopen($path, 'w')) {
-       return false;
-   }
-   if (!fwrite($handle, $content)) {
-       return false;
-   }
-   fclose($handle);
-   return true;
-}
 ?>

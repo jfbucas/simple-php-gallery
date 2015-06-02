@@ -69,7 +69,7 @@ if (! $descriptions) {
 }
 
 $parts = pathinfo($_SERVER['PHP_SELF']);
-$current_working_directory = $parts['dirinfo'];
+$current_working_directory = $parts['dirname'];
 
 $hide_folders[] = '.';
 $hide_folders[] = '..';
@@ -82,9 +82,9 @@ if(isset($_GET['dir']))
     $dir = stripslashes($_GET['dir']);
 
 //Prevent requests for parent directories
-if(eregi('^(\.\.)',$dir))
+if(substr($dir, 0, 2) == '..')
     $dir='.';
-if(eregi('^/',$dir))
+if(substr($dir, 0, 1) == '/')
     $dir='.';
 if(!(strpos($dir,'..') === false))
     $dir='.';
@@ -95,18 +95,20 @@ $current = $patharr[count($patharr)-1];
 $alias = '';
 
 //Get the folder alias, if it exists
-if($descriptions[$current]['title'] != '')
-    $alias = $descriptions[$current]['title'];
-else
-    $alias = $current;
+$alias = getTitle($current);
 
 //If a file was requested for display, read the path into the $display_file variable
-$display_file = eregi_replace(
-    '\./',
-    returnCurrentWorkingDirectory() . '/',
-    stripslashes($_GET['file'])
-);
-$resize_file = stripslashes($_GET['file']);
+if(array_key_exists('file', $_GET))
+{
+    $display_file = preg_replace(
+        '/\.\//',
+        returnCurrentWorkingDirectory() . '/',
+        stripslashes($_GET['file'])
+    );
+    $resize_file = stripslashes($_GET['file']);
+}
+else
+    $display_file = '';
 
 if($display_file != '') {
     if(!file_exists($resize_file)) {
@@ -124,14 +126,10 @@ if($display_file != '') {
             $location = '/';
         header("Location: " . $location);
     }
-    if(eregi(".*(\.jpg|\.gif|\.png|\.jpeg)",basename($_GET['file'])))
+    if(isImage(basename($_GET['file'])))
         $current = basename($_GET['file']);
     else
         exit;
-    if($descriptions[$current]['title'] != '')
-        $alias = $descriptions[$current]['title'];
-    else
-        $alias = $current;
 }
 
 if($alias != '.' && $alias != '')
@@ -146,9 +144,10 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
     foreach(getDirList() as $file) {
         $path = $dir . "/" . $file;
         $webpath = substr($path,2,strlen($path)-2);
+        $filetitle = getTitle($file);
 
         //If the current item is an image, add a the link text to the $imglink array
-        if( eregi(".*(\.jpg|\.gif|\.png|\.jpeg)", $file)) {
+        if( isImage($file)) {
             $cached_img = $cachefolder . "/" . md5($webpath) . ".jpg";
             $divwidth = $maxthumbwidth+4;
             $divheight = $maxthumbheight+24;
@@ -177,13 +176,13 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
                         . '/'
                         . $cached_img
                         . "\" alt=\""
-                        . $descriptions[$file]['title']
+                        . $filetitle
                         . "\" />";
                 else
                     $link .= "<img src=\""
                         . returnCurrentWorkingDirectory()
                         . "/thumb/$webpath\" alt=\""
-                        . $descriptions[$file]['title']
+                        . $filetitle
                         . "\" />";
             }
             else {
@@ -198,36 +197,31 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
                         . $current_working_directory
                         . $cached_img
                         . "\" alt=\""
-                        . $descriptions[$file]['title']
+                        . $filetitle
                         . "\" />";
                 else
                     $link .= "<img src=\"sp_getthumb.php?source=$webpath\" alt=\""
-                        . $descriptions[$file]['title']
+                        . $filetitle
                         . "\" />";
             }
             if($showimgtitles)
-                if($descriptions[$file]['title'] != '')
-                    $link .= '<span>' . $descriptions[$file]['title'] . '</span>';
-                else
-                    $link .= "<span>$file</span>";
+                $link .= '<span>' . $filetitle . '</span>';
             $link .= "</a></div>\n\t";
             $imglink[] = $link;
         }
         //If the current item is a directory, add the link text to the $dirlink array
         else if(is_dir($path) && !in_array($file, $hide_folders)) {
-            if($descriptions[$file]['title'] != '')
-                $file = $descriptions[$file]['title'];
             if($modrewrite)
                 $dir_string = "<a href=\""
                     . returnCurrentWorkingDirectory()
                     . "/folder/$webpath\">"
-                    . $file
+                    . $filetitle
                     . "</a>";
             else
                 $dir_string = "<a href=\""
                     . $_SERVER['PHP_SELF']
                     . "?dir=$path\">"
-                    . $file
+                    . $filetitle
                     . "</a>";
             if($showfolderdetails) {
                 $num_images = getNumImages($path);

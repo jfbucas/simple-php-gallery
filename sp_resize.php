@@ -1,5 +1,6 @@
 <?php
 require('sp_config.php');
+require('sp_helper_functions.php');
 
 $source = stripslashes($_GET['source']);
 $path = pathinfo($source);
@@ -74,28 +75,4 @@ else {
     imagejpeg($original);
 }
 imagedestroy($original);
-
-function write_ini_file($path, $assoc_array) {
-
-   foreach ($assoc_array as $key => $item) {
-       if (is_array($item)) {
-           $content .= "\n[$key]\n";
-           foreach ($item as $key2 => $item2) {
-               $content .= "$key2 = \"$item2\"\n";
-           }
-       }
-       else {
-           $content .= "$key = \"$item\"\n";
-       }
-   }
-
-   if (!$handle = fopen($path, 'w')) {
-       return false;
-   }
-   if (!fwrite($handle, $content)) {
-       return false;
-   }
-   fclose($handle);
-   return true;
-}
 ?>
