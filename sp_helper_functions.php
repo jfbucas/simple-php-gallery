@@ -63,7 +63,7 @@ function getDirDescription() {
 //It returns void.
 function getDirLinks() {
     global $dirlink;
-    echo "<h2>Sous-répertoires</h2><ul>";
+    echo "<h2>Sous-rÃ©pertoires</h2><ul>";
     foreach($dirlink as $link) {
         echo "<li>$link</li>";
     }
@@ -71,19 +71,18 @@ function getDirLinks() {
 }
 
 function getPageTitle() {
-    global $page_title;
-    echo $page_title;
+    global $title, $current;
+    
+    $file_title = getTitle($current);
+    if($file_title != '.' && $file_title != '')
+        $page_title = $title . " : " . $file_title;
+    else
+        $page_title = $title;
+        
+    return $page_title;
 }
 
 function getCurrentWorkingDirectory() {
-    $parts = pathinfo($_SERVER['PHP_SELF']);
-    if($parts['dirname'] != '/')
-        echo $parts['dirname'];
-    else
-        echo '';
-}
-
-function returnCurrentWorkingDirectory() {
     $parts = pathinfo($_SERVER['PHP_SELF']);
     if($parts['dirname'] != '/')
         return $parts['dirname'];
@@ -334,21 +333,21 @@ function getPrevAndNextDir() {
 
     if($modrewrite) {
         $prev_link = "<a accesskey=\"-\" id=\"prev\" href=\""
-            . returnCurrentWorkingDirectory()
+            . getCurrentWorkingDirectory()
             . "/folder/"
             . dirname($_GET['dir'])
             . '/'
             . $imgfiles[$prev_index]
-            . "\">&laquo; Précédente [-]</a>";
+            . "\">&laquo; PrÃ©cÃ©dente [-]</a>";
         $next_link = "<a accesskey=\"=\" id=\"next\" href=\""
-            . returnCurrentWorkingDirectory()
+            . getCurrentWorkingDirectory()
             . "/folder/"
             . dirname($_GET['dir'])
             . '/'
             . $imgfiles[$next_index]
             . "\">[+] Suivante &raquo;</a>"
             . "<a accesskey=\"+\" href=\""
-            . returnCurrentWorkingDirectory()
+            . getCurrentWorkingDirectory()
             . "/folder/"
             . dirname($_GET['dir'])
             . '/'
@@ -362,7 +361,7 @@ function getPrevAndNextDir() {
             . dirname($_GET['dir'])
             . '/'
             . $imgfiles[$prev_index]
-            . "\">&laquo; Précédente [-]</a>";
+            . "\">&laquo; PrÃ©cÃ©dente [-]</a>";
         $next_link = "<a accesskey=\"=\" id=\"next\" href=\""
             . $_SERVER[PHP_SELF]
             . "?dir="
@@ -419,21 +418,21 @@ function getPrevAndNext() {
 
     if($modrewrite) {
         $prev_link = "<a accesskey=\"-\" id=\"prev\" href=\""
-            . returnCurrentWorkingDirectory()
+            . getCurrentWorkingDirectory()
             . "/file/"
             . dirname($_GET['file'])
             . '/'
             . $imgfiles[$prev_index]
-            . "\">&laquo; Précédente [-]</a>";
+            . "\">&laquo; PrÃ©cÃ©dente [-]</a>";
         $next_link = "<a accesskey=\"=\" id=\"next\" href=\""
-            . returnCurrentWorkingDirectory()
+            . getCurrentWorkingDirectory()
             . "/file/"
             . dirname($_GET['file'])
             . '/'
             . $imgfiles[$next_index]
             . "\">[+] Suivante &raquo;</a>"
             . "<a accesskey=\"+\" href=\""
-            . returnCurrentWorkingDirectory()
+            . getCurrentWorkingDirectory()
             . "/file/"
             . dirname($_GET['file'])
             . '/'
@@ -447,7 +446,7 @@ function getPrevAndNext() {
             . dirname($_GET['file'])
             . '/'
             . $imgfiles[$prev_index]
-            . "\">&laquo; Précédente [-]</a>";
+            . "\">&laquo; PrÃ©cÃ©dente [-]</a>";
         $next_link = "<a accesskey=\"=\" id=\"next\" href=\""
             . $_SERVER[PHP_SELF]
             . "?file="
@@ -495,7 +494,7 @@ function getBreadCrumbs() {
     if($dir != '.')
         $patharr = explode('/', $dir);
     else {
-        $cwd = returnCurrentWorkingDirectory() . '/';
+        $cwd = getCurrentWorkingDirectory() . '/';
         $path = @str_replace($cwd,'',$display_file);
         if(!$path)
             $path = $display_file;
@@ -507,7 +506,7 @@ function getBreadCrumbs() {
     $linkpath = '.';
     $counter = 0;
     echo "<strong>Vous voyez :</strong> <a href=\""
-        . returnCurrentWorkingDirectory()
+        . getCurrentWorkingDirectory()
         . "/\"";
     if(
         (count($patharr) == 2 && isset($_GET['dir']))
@@ -522,7 +521,7 @@ function getBreadCrumbs() {
             if($patharr[count($patharr)-1] != $folder) {
                 if($modrewrite) {
                     echo '&raquo; <a href="'
-                        . returnCurrentWorkingDirectory()
+                        . getCurrentWorkingDirectory()
                         . '/folder/'
                         . $linkpath
                         . '"';

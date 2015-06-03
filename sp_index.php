@@ -6,12 +6,12 @@ require('sp_def_vars.php');
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-<title><?php getPageTitle(); ?></title>
+<title><?= getPageTitle(); ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="stylesheet" type="text/css" href="<?php getCurrentWorkingDirectory();?>/sp_styles.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="<?= getCurrentWorkingDirectory();?>/sp_styles.css" media="screen" />
 </head>
 <body>
-<h1><?php getPageTitle(); ?></h1>
+<h1><?= getPageTitle(); ?></h1>
 
 <p id="breadcrumb"><?php getBreadCrumbs();?></p>
 

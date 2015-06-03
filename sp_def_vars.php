@@ -92,17 +92,13 @@ if(!(strpos($dir,'..') === false))
 //Get the name of the current folder.
 $patharr = explode('/',$dir);
 $current = $patharr[count($patharr)-1];
-$alias = '';
-
-//Get the folder alias, if it exists
-$alias = getTitle($current);
 
 //If a file was requested for display, read the path into the $display_file variable
 if(array_key_exists('file', $_GET))
 {
     $display_file = preg_replace(
         '/\.\//',
-        returnCurrentWorkingDirectory() . '/',
+        getCurrentWorkingDirectory() . '/',
         stripslashes($_GET['file'])
     );
     $resize_file = stripslashes($_GET['file']);
@@ -121,7 +117,7 @@ if($display_file != '') {
         if($cacheresized) {
             @unlink($cacheresizedfolder . "/" . $hash . ".jpg");
         }
-        $location = returnCurrentWorkingDirectory();
+        $location = getCurrentWorkingDirectory();
         if(empty($location))
             $location = '/';
         header("Location: " . $location);
@@ -131,11 +127,6 @@ if($display_file != '') {
     else
         exit;
 }
-
-if($alias != '.' && $alias != '')
-    $page_title = $title . " : " . $alias;
-else
-    $page_title = $title;
 
 if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
     $imglink = array(); //An array to hold links to the images
@@ -163,7 +154,7 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
                 $link = '<div class="imgwrapper" style="height:' . $divheight . 'px;">';
             if($modrewrite) {
                 $link .= "<a href=\""
-                    . returnCurrentWorkingDirectory()
+                    . getCurrentWorkingDirectory()
                     . "/file/$webpath\">";
                 if($cachethumbs
                     && file_exists($cached_img)
@@ -172,7 +163,7 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
                     && cacheFilesizeMatch(md5($webpath),filesize($webpath))
                 )
                     $link .= "<img src=\""
-                        . returnCurrentWorkingDirectory()
+                        . getCurrentWorkingDirectory()
                         . '/'
                         . $cached_img
                         . "\" alt=\""
@@ -180,7 +171,7 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
                         . "\" />";
                 else
                     $link .= "<img src=\""
-                        . returnCurrentWorkingDirectory()
+                        . getCurrentWorkingDirectory()
                         . "/thumb/$webpath\" alt=\""
                         . $filetitle
                         . "\" />";
@@ -213,7 +204,7 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
         else if(is_dir($path) && !in_array($file, $hide_folders)) {
             if($modrewrite)
                 $dir_string = "<a href=\""
-                    . returnCurrentWorkingDirectory()
+                    . getCurrentWorkingDirectory()
                     . "/folder/$webpath\">"
                     . $filetitle
                     . "</a>";
@@ -238,7 +229,7 @@ if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
                         $dir_string .= ')';
                 }
                 if($num_dir != 0) {
-                    $dir_string .= $num_dir . " sous-répertoire" . $dir_s . ')';
+                    $dir_string .= $num_dir . " sous-rÃ©pertoire" . $dir_s . ')';
                 }
             }
             $dirlink[$file] = $dir_string;
