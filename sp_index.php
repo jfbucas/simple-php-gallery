@@ -13,47 +13,50 @@ require('sp_def_vars.php');
 <body>
 <h1><?= getPageTitle(); ?></h1>
 
-<p id="breadcrumb"><?php getBreadCrumbs();?></p>
+<p id="breadcrumb"><?= getBreadCrumbs();?></p>
 
 <?php
 //If a file was requested for viewing, output it
 if($display_file != '') {
 ?>
-    <div id="prevnext"><?php getPrevAndNext();?></div><div style="clear:both;"></div>
-    <div id="image"><?php getFile(); ?></div>
+    <div id="prevnext"><?= getPrevAndNext();?><?= getPrevAndNextImgCache();?></div>
+    <div style="clear:both;"></div>
+    <div id="image"><?= getFile(); ?></div>
 <?php
-    if(descriptionExists()) {
+    if(getDescription($current) != '') {
 ?>
-        <p id="desc"><?php getDescription();?></p>
+        <p id="desc"><?= getDescription($current);?></p>
 <?php
     }
 }
 //Otherwise, a directory listing request was made.  Display the thumbnail links.
 else {
 ?>
-    <div id="prevnext"><?php getPrevAndNextDir();?></div><div style="clear:both;"></div>
+    <div id="prevnext"><?= getPrevAndNextDir();?></div>
+    <div style="clear:both;"></div>
 <?php
     //If this directory has a description, output it
     if(getDirDescription() != '') {
     ?>
-        <div id="dirdesc">
-        <?php echo getDirDescription(); ?>
-
-        </div>
+        <div id="dirdesc"><?= getDirDescription(); ?></div>
     <?php
     }
     //If there are sub-directories, list them.
-    if(subDirExist()) {
-    ?>
-        <div id="directories"> <?php getDirLinks(); ?></div>
-    <?php
-    }
-    ?>
+    if(count($dirlink)!=0) { ?>
+        <div id="directories">
+            <h2>Sous-répertoires</h2>
+            <ul>
+                <?php foreach($dirlink as $link) { ?>
+                    <li><?= $link ?></li>
+                <?php } ?>
+            </ul>
+        </div>
+        <?php
+    } ?>
     <div id="gallery">
 <?php
     //Output thumbnail links to all images in this directory
-    //getThumbnails();
-    foreach(getImgLinks() as $link) {
+    foreach($imglink as $link) {
         echo $link;
     }
 ?>
@@ -62,7 +65,7 @@ else {
 }
 ?>
 <p id="credit">
-Powered by <a href="http://relativelyabsolute.com/spg/">Simple PHP Gallery</a> <?php echo VERSION ?>
+Powered by <a href="http://relativelyabsolute.com/spg/">Simple PHP Gallery</a> <?= VERSION ?>
 </p>
 </body>
 </html>

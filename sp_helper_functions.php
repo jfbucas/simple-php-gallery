@@ -26,8 +26,7 @@ function getDescription($file) {
     return $description;
 }
 
-//This function will return a sorted array of all files and folders in the
-//current directory
+//Return a sorted array of all files and folders in the current directory
 function getDirList($input_dir="") {
     global $dir;
     if($input_dir == '')
@@ -40,34 +39,10 @@ function getDirList($input_dir="") {
     return $files;
 }
 
-function subDirExist() {
-    global $dirlink;
-    $exist = false;
-    if(count($dirlink)!=0)
-        $exist = true;
-    return $exist;
-}
-
-function getImgLinks() {
-    global $imglink;
-    return $imglink;
-}
-
 function getDirDescription() {
     global $dir;
     $path = explode('/',$dir);
     return getDescription($path[count($path)-1]);
-}
-
-//This function generates the sub-directory links for the current directory.
-//It returns void.
-function getDirLinks() {
-    global $dirlink;
-    echo "<h2>Sous-répertoires</h2><ul>";
-    foreach($dirlink as $link) {
-        echo "<li>$link</li>";
-    }
-    echo "</ul>";
 }
 
 function getPageTitle() {
@@ -117,6 +92,7 @@ function getFile() {
     global $resize, $cacheresizedfolder, $cacheresized;
     global $current;
 
+    $fileLink = '';
     $cached_img = $cacheresizedfolder
         . "/"
         . md5(substr($resize_file,2,strlen($resize_file)-2))
@@ -131,10 +107,10 @@ function getFile() {
             || $maxheight == 0
             || !$resize
         )
-            echo '<img id="single" src="' . $display_file;
+            $fileLink .= '<img id="single" src="' . $display_file;
         else
         {
-            echo '<a href="'
+            $fileLink .= '<a href="'
                 . $display_file
                 . '" target="top"><img id="single" src="';
             if(
@@ -146,15 +122,15 @@ function getFile() {
                     filesize($resize_file)
                 )
             )
-                echo $path . '/' . $cached_img;
+                $fileLink .= $path . '/' . $cached_img;
             else
-                echo $path . "/sp_resize.php?source=" . $resize_file;
+                $fileLink .= $path . "/sp_resize.php?source=" . $resize_file;
         }
-        echo '" alt="' . getDescription($current);
+        $fileLink .= '" alt="' . getDescription($current);
         if(function_exists('imagecreate') && $maxwidth > 0 && $maxheight > 0 && $resize)
-            echo '" title="Cliquez pour voir en grand" /></a>';
+            $fileLink .= '" title="Cliquez pour voir en grand" /></a>';
         else
-            echo '" />';
+            $fileLink .= '" />';
     }
     else {
         $video_file=substr($display_file, 0, strpos($display_file, "-00001.png") );
@@ -171,19 +147,15 @@ function getFile() {
             $video_orig=substr($display_file, 0, strpos($display_file, ".webm") )
                 . ".mp4";
 
-        echo '<p><video controls="controls" poster="'
+        $fileLink .= '<p><video controls="controls" poster="'
             . $display_file
             .'"  preload="none" src="'
             . $video_file
             . '"></p>';
-        echo '<p><a href="'. $video_orig . '">Download Original Video</a></p>';
+        $fileLink .= '<p><a href="'. $video_orig . '">Download Original Video</a></p>';
 
     }
-}
-
-function descriptionExists() {
-    global $current;
-    return (getDescription($current) != '');
+    return $fileLink;
 }
 
 function sizeMatches($image, $size='thumb') {
@@ -338,14 +310,14 @@ function getPrevAndNextDir() {
             . dirname($_GET['dir'])
             . '/'
             . $imgfiles[$prev_index]
-            . "\">&laquo; Précédente [-]</a>";
+            . "\">&laquo; Précédent [-]</a>";
         $next_link = "<a accesskey=\"=\" id=\"next\" href=\""
             . getCurrentWorkingDirectory()
             . "/folder/"
             . dirname($_GET['dir'])
             . '/'
             . $imgfiles[$next_index]
-            . "\">[+] Suivante &raquo;</a>"
+            . "\">[+] Suivant &raquo;</a>"
             . "<a accesskey=\"+\" href=\""
             . getCurrentWorkingDirectory()
             . "/folder/"
@@ -361,14 +333,14 @@ function getPrevAndNextDir() {
             . dirname($_GET['dir'])
             . '/'
             . $imgfiles[$prev_index]
-            . "\">&laquo; Précédente [-]</a>";
+            . "\">&laquo; Précédent [-]</a>";
         $next_link = "<a accesskey=\"=\" id=\"next\" href=\""
             . $_SERVER[PHP_SELF]
             . "?dir="
             . dirname($_GET['dir'])
             . '/'
             . $imgfiles[$next_index]
-            . "\">[+] Suivante &raquo;</a>"
+            . "\">[+] Suivant &raquo;</a>"
             . "<a accesskey=\"+\" href=\""
             . $_SERVER[PHP_SELF]
             . "?dir="
@@ -377,23 +349,7 @@ function getPrevAndNextDir() {
             . $imgfiles[$next_index]
             . "\"></a>";
     }
-    echo $prev_link . "\n" . $next_link;
-
-    if($precache && !$resize) {
-        $trueimagepath = dirname($_SERVER[PHP_SELF]) . "/" . dirname($_GET['dir']);
-        echo "\n<img src=\""
-            . $trueimagepath
-            . "/"
-            . $imgfiles[$prev_index]
-            . "\" width=\"1\" height=\"1\" alt=\"\" border=\"0\" "
-            . "style=\"position:absolute; top:0; left:0; visibility:hidden;\" />";
-        echo "\n<img src=\""
-            . $trueimagepath
-            . "/"
-            . $imgfiles[$next_index]
-            . "\" width=\"1\" height=\"1\" alt=\"\" border=\"0\" "
-            . "style=\"position:absolute; top:0; left:0; visibility:hidden;\" />\n";
-    }
+    return $prev_link . "\n" . $next_link;
 }
 
 function getPrevAndNext() {
@@ -462,27 +418,49 @@ function getPrevAndNext() {
             . $imgfiles[$next_index]
             . "\"></a>";
     }
-    echo $prev_link . "\n" . $next_link;
+    return $prev_link . "\n" . $next_link;
+}
 
+function getPrevAndNextImgCache() {
+    global $modrewrite, $precache, $resize;
+
+    $imgCache = '';
     if($precache && !$resize) {
-        $trueimagepath = dirname($_SERVER[PHP_SELF]) . "/" . dirname($_GET['file']);
-        echo "\n<img src=\""
+        $files = getDirList('./' . dirname($_GET['file']) . '/');
+
+        foreach($files as $img) {
+            if(isImage($img))
+                $imgfiles[] = $img;
+        }
+
+        $current_index = array_search(basename($_GET['file']),$imgfiles);
+
+        $prev_index = $current_index-1;
+        if($prev_index == -1)
+            $prev_index = count($imgfiles)-1;
+
+        $next_index = $current_index+1;
+        if($next_index == count($imgfiles))
+            $next_index = 0;
+
+        $trueimagepath = dirname($_SERVER['PHP_SELF']) . "/" . dirname($_GET['file']);
+        $imgCache .= "\n<img src=\""
             . $trueimagepath
             . "/"
             . $imgfiles[$prev_index]
             . "\" width=\"1\" height=\"1\" alt=\"\" border=\"0\" "
             . "style=\"position:absolute; top:0; left:0; visibility:hidden;\" />";
-        echo "\n<img src=\""
+        $imgCache .= "\n<img src=\""
             . $trueimagepath
             . "/"
             . $imgfiles[$next_index]
             . "\" width=\"1\" height=\"1\" alt=\"\" border=\"0\" "
             . "style=\"position:absolute; top:0; left:0; visibility:hidden;\" />\n";
     }
+    return $imgCache;
 }
 
-//This function generates the breadcrumb trail displayed at the top of the page.
-//It returns void.
+//Generates the breadcrumb trail displayed at the top of the page.
 function getBreadCrumbs() {
     global $dir;
     global $display_file;
@@ -505,45 +483,46 @@ function getBreadCrumbs() {
     }
     $linkpath = '.';
     $counter = 0;
-    echo "<strong>Vous voyez :</strong> <a href=\""
+    $breadCrumbs = "<strong>Vous voyez :</strong> <a href=\""
         . getCurrentWorkingDirectory()
         . "/\"";
     if(
         (count($patharr) == 2 && isset($_GET['dir']))
         ||(count($patharr) == 1 && isset($_GET['file']))
     )
-        echo " accesskey=\"u\"";
-    echo ">" . $title . "</a> ";
+        $breadCrumbs .= " accesskey=\"u\"";
+    $breadCrumbs .= ">" . $title . "</a> ";
     foreach($patharr as $folder) {
         $foldername = getTitle($folder);
         if(!(substr($folder, 0, 1) == '.')) {
             $linkpath .= "/$folder";
             if($patharr[count($patharr)-1] != $folder) {
                 if($modrewrite) {
-                    echo '&raquo; <a href="'
+                    $breadCrumbs .= '&raquo; <a href="'
                         . getCurrentWorkingDirectory()
                         . '/folder/'
                         . $linkpath
                         . '"';
                     if($counter == (count($patharr)-2))
-                        echo " accesskey=\"u\"";
-                    echo ">$foldername</a> ";
+                        $breadCrumbs .= " accesskey=\"u\"";
+                    $breadCrumbs .= ">$foldername</a> ";
                 }
                 else {
-                    echo "&raquo; <a href=\""
+                    $breadCrumbs .= "&raquo; <a href=\""
                         . $_SERVER['PHP_SELF']
                         . "?dir=$linkpath\"";
                     if($counter == count($patharr)-2)
-                        echo " accesskey=\"u\"";
-                    echo ">$foldername</a> ";
+                        $breadCrumbs .= " accesskey=\"u\"";
+                    $breadCrumbs .= ">$foldername</a> ";
                 }
             }
             else 
                 if( ! ($patharr[count($patharr)-1] == ''))
-                    echo "&raquo; <strong>$foldername</strong>";
+                    $breadCrumbs .= "&raquo; <strong>$foldername</strong>";
         }
         $counter++;
     }
+    return $breadCrumbs;
 }
 
 function getNumImages($dir) {
