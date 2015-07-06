@@ -30,5 +30,4 @@ $hide_folders[] = $cacheresizedfolder;
 $showfolderdetails = true;
 $showimgtitles = true;
 $alignimages = true;
-$gd_version = "2.0.28";
 ?>

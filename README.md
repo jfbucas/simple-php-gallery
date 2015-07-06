@@ -277,20 +277,6 @@ Default Value:
 
     $alignimages = true;
 
-#### Parameter `$gd_version`
-
-You will notice that this option is not initially found in `sp_config.php`. Simple PHP Gallery will detect
-this setting automatically and attempt to append a line similar to the following to `sp_config.php`:
-
-    $gd_version = '//your GD version here';
-
-If Simple PHP Gallery is unable to write to `sp_config.php`, it will simply re-detect the version every
-time the script is loaded. This is a minor additional burden on your server. If `sp_config.php` is not
-writeable on your server, you may wish to add this setting manually.
-
-To manually set `$gd_version`, upload the file named `gd_detect.php` to your server and load it into your
-browser. The proper line of code to add to `sp_config.php` will be automatically generated for you.
-
 Adding File & Folder Titles & Descriptions
 ------------------------------------------
 

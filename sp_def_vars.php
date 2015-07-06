@@ -3,26 +3,6 @@ require('sp_config.php');
 
 define("VERSION","1.1");
 
-//Detect and store GD version if this is the first time the script is run.
-if(!isset($gd_version)) {
-    $config_file = @fopen('sp_config.php','r');
-    $contents = fread($config_file, filesize('sp_config.php'));
-    @fclose($config_file);
-    $gd_version = gd_version();
-    $contents = str_replace(
-        '?>',
-        '$gd_version = "' . $gd_version . "\";\n?>",
-        $contents
-    );
-    $config_file = @fopen('sp_config.php','w');
-    @fwrite($config_file, $contents);
-//~     header("Location: $_SERVER[PHP_SELF]");
-//~     echo 'GD Detected!  Version: '
-//~         .$gd_version
-//~         .'. Please reload this page to view your gallery. '
-//~         .'You will not see this message again.';
-}
-
 //Create the cache folder if caching is enabled and it does not already exist
 //If the folder cannot be created, disable caching
 if($cachethumbs && !file_exists($cachefolder)) {

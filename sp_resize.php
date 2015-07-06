@@ -5,18 +5,18 @@ require('sp_helper_functions.php');
 $source = stripslashes($_GET['source']);
 $path = pathinfo($source);
 
-$hash = md5(substr($source,2,strlen($source)-2));
+$hash = md5(substr($source, 2, strlen($source) - 2));
 
 switch(strtolower($path["extension"])) {
     case "jpeg":
     case "jpg":
-        $original=imagecreatefromjpeg($source);
+        $original = imagecreatefromjpeg($source);
         break;
     case "gif":
-        $original=imagecreatefromgif($source);
+        $original = imagecreatefromgif($source);
         break;
     case "png":
-        $original=imagecreatefrompng($source);
+        $original = imagecreatefrompng($source);
         break;
     default:
         break;
@@ -26,34 +26,25 @@ $yratio = $maxheight/(imagesy($original));
 
 if($xratio < 1 || $yratio < 1) {
     if($xratio < $yratio) {
-        if($gd_version >= 2)
-            $thumb = imagecreatetruecolor(
-                $maxwidth,
-                floor(imagesy($original)*$xratio)
-            );
-        else {
-            imagejpeg($original);
-            exit();
-        }
+        $thumb = imagecreatetruecolor(
+            $maxwidth,
+            floor(imagesy($original)*$xratio)
+        );
     }
     else {
-        if($gd_version >= 2)
-            $thumb = imagecreatetruecolor(
-                floor(imagesx($original)*$yratio),
-                $maxheight
-            );
-        else {
-            imagejpeg($original);
-            exit();
-        }
+        $thumb = imagecreatetruecolor(
+            floor(imagesx($original)*$yratio),
+            $maxheight
+        );
     }
     imagecopyresampled(
         $thumb,
         $original,
         0, 0,
         0, 0,
-        imagesx($thumb)+1, imagesy($thumb)+1,
-        imagesx($original), imagesy($original));
+        imagesx($thumb) + 1, imagesy($thumb) + 1,
+        imagesx($original), imagesy($original)
+    );
 
     if($cacheresized) {
         imagejpeg($thumb, $cacheresizedfolder . "/" . $hash . ".jpg");

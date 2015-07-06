@@ -25,28 +25,16 @@ $xratio = $maxthumbwidth/(imagesx($original));
 $yratio = $maxthumbheight/(imagesy($original));
 
 if($xratio < $yratio) {
-    if($gd_version >= 2)
-        $thumb = imagecreatetruecolor(
-            $maxthumbwidth,
-            floor(imagesy($original)*$xratio)
-        );
-    else
-        $thumb = imagecreate(
-            $maxthumbwidth,
-            floor(imagesy($original)*$xratio)
-        );
+    $thumb = imagecreatetruecolor(
+        $maxthumbwidth,
+        floor(imagesy($original)*$xratio)
+    );
 }
 else {
-    if($gd_version >= 2)
-        $thumb = imagecreatetruecolor(
-            floor(imagesx($original)*$yratio),
-            $maxthumbheight
-        );
-    else
-        $thumb = imagecreate(
-            floor(imagesx($original)*$yratio),
-            $maxthumbheight
-        );
+    $thumb = imagecreatetruecolor(
+        floor(imagesx($original)*$yratio),
+        $maxthumbheight
+    );
 }
 
 imagecopyresampled(
@@ -54,8 +42,8 @@ imagecopyresampled(
     $original,
     0, 0,
     0, 0,
-    imagesx($thumb)+1,imagesy($thumb)+1,
-    imagesx($original),imagesy($original)
+    imagesx($thumb) + 1, imagesy($thumb) + 1,
+    imagesx($original), imagesy($original)
 );
 imagedestroy($original);
 
