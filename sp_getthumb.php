@@ -7,20 +7,8 @@ $path = pathinfo($source);
 
 $hash = md5($source);
 
-switch(strtolower($path["extension"])) {
-    case "jpeg":
-    case "jpg":
-        $original=imagecreatefromjpeg($source);
-        break;
-    case "gif":
-        $original=imagecreatefromgif($source);
-        break;
-    case "png":
-        $original=imagecreatefrompng($source);
-        break;
-    default:
-        break;
-}
+$original = imagecreatefrom_ext($source);
+
 $xratio = $maxthumbwidth/(imagesx($original));
 $yratio = $maxthumbheight/(imagesy($original));
 

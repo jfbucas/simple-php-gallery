@@ -6,7 +6,7 @@ function isImage($file) {
 
 function getTitle($file) {
     global $descriptions;
-    
+
     $my_title = $file;
     if(array_key_exists($file, $descriptions))
         if(array_key_exists('title', $descriptions[$file]))
@@ -17,7 +17,7 @@ function getTitle($file) {
 
 function getDescription($file) {
     global $descriptions;
-    
+
     $description = '';
     if(array_key_exists($file, $descriptions))
         if(array_key_exists('desc', $descriptions[$file]))
@@ -47,13 +47,13 @@ function getDirDescription() {
 
 function getPageTitle() {
     global $title, $current;
-    
+
     $file_title = getTitle($current);
     if($file_title != '.' && $file_title != '')
         $page_title = $title . " : " . $file_title;
     else
         $page_title = $title;
-        
+
     return $page_title;
 }
 
@@ -72,7 +72,7 @@ function getDirList(){
     $fullDirList = getFullDirList();
     uksort($fullDirList, "strnatcasecmp");
     $fullDirList = array_reverse($fullDirList);
-    
+
     $dirList = array();
     foreach($fullDirList as $file) {
         $path = $dir . "/" . $file;
@@ -175,7 +175,7 @@ function getFile() {
     if($path == '/')
         $path = '';
     if ( strpos($display_file, ".webm-00001.png") === false ) {
-    
+
         $linkType = 'img';
         $video_poster = '';
 
@@ -235,26 +235,36 @@ function getFile() {
     );
 }
 
-function sizeMatches($image, $size='thumb') {
-    global $maxthumbwidth, $maxthumbheight, $maxwidth, $maxheight;
-    
-    $match = false;
-    if(file_exists($image)) {
-        $path = pathinfo($image);
+function imagecreatefrom_ext($imageFile) {
+    $image = NULL;
+    if(file_exists($imageFile)) {
+        $path = pathinfo($imageFile);
         switch(strtolower($path["extension"])) {
             case "jpeg":
             case "jpg":
-                $image = imagecreatefromjpeg($image);
+                $image = imagecreatefromjpeg($imageFile);
                 break;
             case "gif":
-                $image = imagecreatefromgif($image);
+                $image = imagecreatefromgif($imageFile);
                 break;
             case "png":
-                $image = imagecreatefrompng($image);
+                $image = imagecreatefrompng($imageFile);
                 break;
             default:
                 break;
         }
+    }
+    return $image;
+}
+
+function sizeMatches($image, $size='thumb') {
+    global $maxthumbwidth, $maxthumbheight, $maxwidth, $maxheight;
+
+    $match = false;
+    if(file_exists($image)) {
+
+        $image = imagecreatefrom_ext($image);
+
         $x = imagesx($image);
         $y = imagesy($image);
         imagedestroy($image);
@@ -389,7 +399,7 @@ function getPrevAndNextDir() {
     else {
         $url_prefix = $_SERVER[PHP_SELF] . "?dir=" . $dirOfDir . '/';
     }
-    
+
     return array(
         'prev' => $url_prefix . $imgfiles[$prev_index],
         'next' => $url_prefix . $imgfiles[$next_index],
@@ -424,7 +434,7 @@ function getPrevAndNext() {
     else {
         $url_prefix = $_SERVER[PHP_SELF] . "?file=" . $dirOfFile . '/';
     }
-    
+
     return array(
         'prev' => $url_prefix . $imgfiles[$prev_index],
         'next' => $url_prefix . $imgfiles[$next_index],
@@ -438,7 +448,7 @@ function getBreadCrumbs() {
     global $current_working_directory;
     global $title;
     global $modrewrite;
-    
+
     $cwd = getCurrentWorkingDirectory();
     $links = array();
     $nodir = false;
@@ -491,7 +501,7 @@ function getBreadCrumbs() {
                     'first' => false,
                     );
             }
-            else 
+            else
                 if( ! ($patharr[count($patharr)-1] == '')) {
                     $links[] = array(
                         'url' => "",
