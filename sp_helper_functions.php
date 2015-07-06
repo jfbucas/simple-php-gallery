@@ -1,7 +1,7 @@
 <?php
 
 function isImage($file) {
-    return preg_match("/.*(\.jpg|\.gif|\.png|\.jpeg)/", $file);
+    return preg_match("/.*(\.JPG|\.jpg|\.GIF|\.gif|\.PNG|\.png|\.JPEG|\.jpeg)/", $file);
 }
 
 function getTitle($file) {
