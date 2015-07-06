@@ -83,11 +83,11 @@ if(isset($_GET['dir']))
 
 //Prevent requests for parent directories
 if(substr($dir, 0, 2) == '..')
-    $dir='.';
+    $dir = '.';
 if(substr($dir, 0, 1) == '/')
-    $dir='.';
-if(!(strpos($dir,'..') === false))
-    $dir='.';
+    $dir = '.';
+if(!(strpos($dir, '..') === false))
+    $dir = '.';
 
 //Get the name of the current folder.
 $patharr = explode('/',$dir);
@@ -126,117 +126,5 @@ if($display_file != '') {
         $current = basename($_GET['file']);
     else
         exit;
-}
-
-if(!empty($_GET['dir']) || (empty($_GET['dir']) && empty($_GET['file']))) {
-    $imglink = array(); //An array to hold links to the images
-    $dirlink = array(); //An array to hold links to sub-directories
-
-    foreach(getDirList() as $file) {
-        $path = $dir . "/" . $file;
-        $webpath = substr($path,2,strlen($path)-2);
-        $filetitle = getTitle($file);
-
-        //If the current item is an image, add a the link text to the $imglink array
-        if( isImage($file)) {
-            $cached_img = $cachefolder . "/" . md5($webpath) . ".jpg";
-            $divwidth = $maxthumbwidth+4;
-            $divheight = $maxthumbheight+24;
-            if($showimgtitles)
-                $divheight += 16;
-            if($alignimages)
-                $link = '<div class="imgwrapper" style="height:'
-                    . $divheight
-                    . 'px;width:'
-                    . $divwidth
-                    .'px;text-align:center">';
-            else
-                $link = '<div class="imgwrapper" style="height:' . $divheight . 'px;">';
-            if($modrewrite) {
-                $link .= "<a href=\""
-                    . getCurrentWorkingDirectory()
-                    . "/file/$webpath\">";
-                if($cachethumbs
-                    && file_exists($cached_img)
-                    && sizeMatches($cached_img)
-                    && cacheLinkMatch(md5($webpath))
-                    && cacheFilesizeMatch(md5($webpath),filesize($webpath))
-                )
-                    $link .= "<img src=\""
-                        . getCurrentWorkingDirectory()
-                        . '/'
-                        . $cached_img
-                        . "\" alt=\""
-                        . $filetitle
-                        . "\" />";
-                else
-                    $link .= "<img src=\""
-                        . getCurrentWorkingDirectory()
-                        . "/thumb/$webpath\" alt=\""
-                        . $filetitle
-                        . "\" />";
-            }
-            else {
-                $link .= "<a href=\"$_SERVER[PHP_SELF]?file=$path\">";
-                if($cachethumbs
-                    && file_exists($cached_img)
-                    && sizeMatches($cached_img)
-                    && cacheLinkMatch(md5($webpath))
-                    && cacheFilesizeMatch(md5($webpath),filesize($webpath))
-                )
-                    $link .= "<img src=\""
-                        . $current_working_directory
-                        . $cached_img
-                        . "\" alt=\""
-                        . $filetitle
-                        . "\" />";
-                else
-                    $link .= "<img src=\"sp_getthumb.php?source=$webpath\" alt=\""
-                        . $filetitle
-                        . "\" />";
-            }
-            if($showimgtitles)
-                $link .= '<span>' . $filetitle . '</span>';
-            $link .= "</a></div>\n\t";
-            $imglink[] = $link;
-        }
-        //If the current item is a directory, add the link text to the $dirlink array
-        else if(is_dir($path) && !in_array($file, $hide_folders)) {
-            if($modrewrite)
-                $dir_string = "<a href=\""
-                    . getCurrentWorkingDirectory()
-                    . "/folder/$webpath\">"
-                    . $filetitle
-                    . "</a>";
-            else
-                $dir_string = "<a href=\""
-                    . $_SERVER['PHP_SELF']
-                    . "?dir=$path\">"
-                    . $filetitle
-                    . "</a>";
-            if($showfolderdetails) {
-                $num_images = getNumImages($path);
-                $num_dir = getNumDir($path);
-                $img_s = ($num_images == 1) ? '':'s';
-                $dir_s = ($num_dir == 1) ? '':'s';
-                if($num_images != 0 || $num_dir != 0)
-                    $dir_string .= " (";
-                if($num_images != 0) {
-                    $dir_string .= $num_images . " image" . $img_s;
-                    if($num_dir != 0)
-                        $dir_string .= ', ';
-                    else
-                        $dir_string .= ')';
-                }
-                if($num_dir != 0) {
-                    $dir_string .= $num_dir . " sous-répertoire" . $dir_s . ')';
-                }
-            }
-            $dirlink[$file] = $dir_string;
-        }
-        //If the current item is not an image and is not a directory, ignore it
-    }
-    uksort($dirlink, "strnatcasecmp");
-    $dirlink = array_reverse($dirlink);
 }
 ?>

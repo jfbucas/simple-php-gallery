@@ -13,57 +13,98 @@ require('sp_def_vars.php');
 <body>
 <h1><?= getPageTitle(); ?></h1>
 
-<p id="breadcrumb"><?= getBreadCrumbs();?></p>
+<p id="breadcrumb"><strong>Vous voyez :</strong>
+<?php foreach( getBreadCrumbs() as $link): ?>
+    <?php if( ! $link['first']): ?>&raquo;<?php endif; ?>
+    <a href="<?= $link['url'] ?>" <?= $link['accesskey'] ?>><?= $link['title'] ?></a>
+<?php endforeach; ?>
+</p>
 
-<?php
-//If a file was requested for viewing, output it
-if($display_file != '') {
-?>
-    <div id="prevnext"><?= getPrevAndNext();?><?= getPrevAndNextImgCache();?></div>
+<?php if($display_file != ''): //Image requested ?>
+
+    <div id="prevnext">
+        <?php $prevNext = getPrevAndNext(); ?>
+        <a accesskey="-" id="prev" href="<?= $prevNext['prev'] ?>">&laquo; Précédente [-]</a>
+        <a accesskey="+" id="next" href="<?= $prevNext['next'] ?>">[+] Suivante &raquo;</a>
+    </div>
     <div style="clear:both;"></div>
-    <div id="image"><?= getFile(); ?></div>
-<?php
-    if(getDescription($current) != '') {
-?>
-        <p id="desc"><?= getDescription($current);?></p>
-<?php
-    }
-}
-//Otherwise, a directory listing request was made.  Display the thumbnail links.
-else {
-?>
-    <div id="prevnext"><?= getPrevAndNextDir();?></div>
+    <?php $fileInfo = getFile(); ?>
+    <div id="image">
+        <?php if( $fileInfo['linkType'] == 'img'): ?>
+            <?php if( $fileInfo['target_url'] != ''): ?><a href="<?= $fileInfo['target_url'] ?>">
+            <?php endif; ?>
+            <img id="single" src="<?= $fileInfo['url'] ?>" alt="<?= $fileInfo['desc'] ?>"
+             <?php if( $fileInfo['target_url'] != ''): ?>
+             title="Cliquez pour voir en grand" />
+            </a>
+            <?php else: ?>
+            />
+            <?php endif; ?>
+        <?php else: // video ?>
+            <p><video controls="controls" poster="<?= $fileInfo['video_poster'] ?>"  preload="none" src="<?= $fileInfo['url'] ?>"></p>
+            <p><a href="<?= $fileInfo['target_url'] ?>">Télécharger la vidéo d'origine</a></p>
+        <?php endif; ?>
+    </div>
+    <?php if($fileInfo['desc'] != ''): ?>
+        <p id="desc"><?= $fileInfo['desc'] ?></p>
+    <?php endif; ?>
+
+<?php else: // Directory listing requested ?>
+
+    <div id="prevnext">
+        <?php $prevNext = getPrevAndNextDir(); ?>
+        <a accesskey="-" id="prev" href="<?= $prevNext['prev'] ?>">&laquo; Précédent [-]</a>
+        <a accesskey="+" id="next" href="<?= $prevNext['next'] ?>">[+] Suivant &raquo;</a>
+    </div>
     <div style="clear:both;"></div>
-<?php
-    //If this directory has a description, output it
-    if(getDirDescription() != '') {
-    ?>
-        <div id="dirdesc"><?= getDirDescription(); ?></div>
-    <?php
-    }
-    //If there are sub-directories, list them.
-    if(count($dirlink)!=0) { ?>
+    <?php $dirDesc = getDirDescription(); ?>
+    <?php if($dirDesc != ''): ?>
+        <p id="dirdesc"><?= $dirDesc ?></p>
+    <?php endif; ?>
+    <?php $dirList = getDirList(); ?>
+    <?php if(count($dirList)!=0): //If there are sub-directories, list them. ?>
         <div id="directories">
             <h2>Sous-répertoires</h2>
             <ul>
-                <?php foreach($dirlink as $link) { ?>
-                    <li><?= $link ?></li>
-                <?php } ?>
+                <?php foreach($dirList as $oneDir): ?>
+                <li>
+                    <a href="<?= $oneDir['url'] ?>"><?= $oneDir['filetitle'] ?></a>
+                    <?php if($oneDir['num_images'] != 0 || $oneDir['num_dir'] != 0): ?>
+                    (
+                        <?php if($oneDir['num_images'] != 0): ?>
+                            <?= $oneDir['num_images'] ?> image<?= ($oneDir['num_images'] == 1) ? '':'s' ?>
+                        <?php endif; ?>
+                        <?php if($oneDir['num_images'] != 0 && $oneDir['num_dir'] != 0): ?>, <?php endif; ?>
+                        <?php if($oneDir['num_dir'] != 0): ?>
+                            <?= $oneDir['num_dir'] ?> sous-répertoire<?= ($oneDir['num_dir'] == 1) ? '':'s' ?>
+                        <?php endif; ?>
+                    )
+                    <?php endif; ?>
+                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
-        <?php
-    } ?>
+    <?php endif; ?>
     <div id="gallery">
-<?php
-    //Output thumbnail links to all images in this directory
-    foreach($imglink as $link) {
-        echo $link;
-    }
-?>
+        <?php $imgList = getImgList(); ?>
+        <?php foreach($imgList as $img1): //Output thumbnail links to all images in this directory ?>
+            <div class="imgwrapper" style="height:<?= $img1['divheight'] ?>px;
+                <?php if($alignimages): ?>width:<?= $img1['divwidth'] ?>px;
+                text-align:center<?php endif; ?>
+            ">
+            <a href="<?= $img1['url'] ?>">
+                <img src="<?= $img1['thumbnail_url'] ?>" 
+                    <?php if($img1['filetitle'] != ''): ?>alt="<?= $img1['filetitle'] ?>"<?php endif; ?>/>
+                <?php if($showimgtitles): ?>
+                    <span><?= $img1['filetitle'] ?></span>
+                <?php endif; ?>
+            </a>
+            </div>
+        <?php endforeach; ?>
     </div>
-<?php
-}
-?>
+
+<?php endif; ?>
+
 <p id="credit">
 Powered by <a href="http://relativelyabsolute.com/spg/">Simple PHP Gallery</a> <?= VERSION ?>
 </p>
