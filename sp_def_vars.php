@@ -55,6 +55,9 @@ $hide_folders[] = '.';
 $hide_folders[] = '..';
 $hide_folders[] = '.git';
 $hide_folders[] = 'cgi-bin';
+$hide_folders[] = 'css';
+$hide_folders[] = 'fonts';
+$hide_folders[] = 'js';
 
 //If a directory list request was made, parse it into the dir variable.
 $dir='.';
