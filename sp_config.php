@@ -1,5 +1,5 @@
 <?php
-$title = 'Galleries de Lena Bucas';
+$title = 'Nos Photos';
 
 //Thumbnail Settings
 $maxthumbwidth = 240;
@@ -7,8 +7,8 @@ $maxthumbheight = 240;
 
 //Main Image Resize Settings
 $resize = true;
-$maxwidth = 800;
-$maxheight = 600;
+$maxwidth = 1024;
+$maxheight = 768;
 
 //$modrewrite Settings
 $modrewrite = true;
@@ -23,11 +23,11 @@ $cacheresizedfolder = 'rcache';
 $precache = true;
 
 //Folder Hiding
-$hide_folders[] = 'cgi-bin';
+$hide_folders[] = $cachefolder;
+$hide_folders[] = $cacheresizedfolder;
 
 //Miscellaneous Settings
 $showfolderdetails = true;
 $showimgtitles = true;
 $alignimages = true;
-$gd_version = "2.0.28";
 ?>
