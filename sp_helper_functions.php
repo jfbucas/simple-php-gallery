@@ -209,14 +209,14 @@ function getFile() {
     else {
         $linkType = 'video';
         $video_file = substr($display_file, 0, strpos($display_file, "-00001.png") );
-        if ( strpos($display_file, "270.webm") )
-            $video_orig = substr($display_file, 0, strpos($display_file, "270.webm") )
+        if ( strpos($display_file, "_270.webm") )
+            $video_orig = substr($display_file, 0, strpos($display_file, "_270.webm") )
                 . ".mp4";
-        if ( strpos($display_file, "180.webm") )
-            $video_orig = substr($display_file, 0, strpos($display_file, "180.webm") )
+        if ( strpos($display_file, "_180.webm") )
+            $video_orig = substr($display_file, 0, strpos($display_file, "_180.webm") )
                 . ".mp4";
-        if ( strpos($display_file, "90.webm") )
-            $video_orig = substr($display_file, 0, strpos($display_file, "90.webm") )
+        if ( strpos($display_file, "_090.webm") )
+            $video_orig = substr($display_file, 0, strpos($display_file, "_090.webm") )
                 . ".mp4";
         else
             $video_orig = substr($display_file, 0, strpos($display_file, ".webm") )
