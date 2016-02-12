@@ -369,7 +369,7 @@ function resizedCacheFilesizeMatch($hash, $filesize) {
 }
 
 function getPrevAndNextDir() {
-    global $modrewrite, $precache, $resize;
+    global $modrewrite, $precache, $resize, $hide_folders;
     if(!array_key_exists('dir', $_GET))
         return;
 
@@ -379,7 +379,7 @@ function getPrevAndNextDir() {
 
     foreach($files as $f) {
         if(is_dir('./' . $dirOfDir . '/' . $f)) {
-            if (( $f != '.' ) && ( $f != '..' ) && ($f != "cache") && ($f != "rcache"))
+            if (!in_array($f, $hide_folders))
                 $imgfiles[] = $f;
         }
     }
@@ -527,15 +527,11 @@ function getNumImages($dir) {
 }
 
 function getNumDir($directory) {
-    global $cachefolder;
+    global $hide_folders;
     $num_dir = 0;
     foreach(getFullDirList($directory) as $item) {
         $path = $directory . '/' . $item;
-        if(is_dir($path)
-            && $item != '.'
-            && $item != '..'
-            && $item != $cachefolder
-        )
+        if(is_dir($path) && !in_array($item, $hide_folders))
             $num_dir++;
     }
     return $num_dir;
