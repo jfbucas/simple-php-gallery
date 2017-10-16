@@ -1,5 +1,8 @@
 <?php
+// Site settings
 $title = 'Nos Photos';
+$icon = 'home.mick.bucas.name.png';
+$icontype = 'png';
 
 //Thumbnail Settings
 $maxthumbwidth = 240;
