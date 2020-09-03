@@ -6,9 +6,46 @@ body {
 	padding-bottom: 20px;
 }
 .thumb {
-	text-align:center;
+	text-align: center;
 }
 .centered {
 	width: 100%;
 	margin: 0 auto;
+}
+.exif-data h3 {
+	font-size: 80%;
+}
+.subdirs {
+	columns: 1;
+}
+@media (min-width: 768px) {
+	.subdirs {
+		columns: 2;
+	}
+}
+@media (min-width: 992px) {
+	.subdirs {
+		columns: 3;
+	}
+}
+@media (min-width: 1200px) {
+	.subdirs {
+		columns: 4;
+	}
+}
+@media (min-width: 1600px) {
+	.container {
+		width: 1580px;
+	}
+}
+@media (min-width: 1900px) {
+	.container {
+		width: 1780px;
+	}
+}
+.grid-item {
+	float: left;
+	width: 240px;
+	height: 240px;
+	margin-bottom: 10px;
 }

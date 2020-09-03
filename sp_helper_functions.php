@@ -4,26 +4,40 @@ function isImage($file) {
     return preg_match("/.*(\.JPG|\.jpg|\.GIF|\.gif|\.PNG|\.png|\.JPEG|\.jpeg)/", $file);
 }
 
-function getTitle($file) {
-    global $descriptions;
-
-    $my_title = $file;
-    if(array_key_exists($file, $descriptions))
-        if(array_key_exists('title', $descriptions[$file]))
-            $my_title = $descriptions[$file]['title'];
-
-    return $my_title;
-}
-
-function getDescription($file) {
-    global $descriptions;
-
-    $description = '';
-    if(array_key_exists($file, $descriptions))
-        if(array_key_exists('desc', $descriptions[$file]))
-            $description = $descriptions[$file]['desc'];
-
-    return $description;
+function getDescOrName($object) {
+    $desc_file = "-";
+    if(is_file($object)) {
+        $desc_file = dirname($object).'/sp_descriptions.ini';
+        $object_name = basename($object);
+    }
+    else
+        if(is_dir($object)) {
+            $desc_file = $object.'/sp_descriptions.ini';
+            $object_name = '.';
+        }
+        else // Unknown object type, ignored
+            $info = "";
+    if(is_file($desc_file)) {
+        //Parse the descriptions file
+        $infos = @parse_ini_file($desc_file,true);
+        if (! $infos) {
+            die('Unable to read sp_descriptions.ini file for $object.');
+        }
+        if(array_key_exists($object_name, $infos)) {
+            if(array_key_exists('desc', $infos[$object_name]))
+                $info = $infos[$object_name]['desc'];
+            else // No information on this object in description file, ignored
+                $info = "";
+        }
+        else  // No information on this object in description file, ignored
+            $info = "";
+    }
+    else // No information on object, ignored
+        $info = "";
+    if($info == "")
+        return $object;
+    else
+        return $info;
 }
 
 //Return a sorted array of all files and folders in the current directory
@@ -42,13 +56,34 @@ function getFullDirList($input_dir="") {
 function getDirDescription() {
     global $dir;
     $path = explode('/',$dir);
-    return getDescription($path[count($path)-1]);
+    return getDescOrName($path[count($path)-1]);
+}
+
+function getExifData($file) {
+    $exifProperties = array();
+    $exif = @exif_read_data($file, 0, true);
+    if($exif!==false)
+    {
+
+        foreach ($exif as $key => $section) {
+            foreach ($section as $name => $val) {
+                if(is_array($val)) {
+                    foreach ($val as $subvalname => $subval) {
+                        $exifProperties["$key.$name.$subvalname"] = $subval;
+                    }
+                }
+                else
+                    $exifProperties["$key.$name"] = $val;
+            }
+        }
+    }
+    return $exifProperties;
 }
 
 function getPageTitle() {
     global $title, $current;
 
-    $file_title = getTitle($current);
+    $file_title = getDescOrName($current);
     if($file_title != '.' && $file_title != '')
         $page_title = $title . " : " . $file_title;
     else
@@ -77,7 +112,7 @@ function getDirList(){
     foreach($fullDirList as $file) {
         $path = $dir . "/" . $file;
         $webpath = substr($path,2,strlen($path)-2);
-        $filetitle = getTitle($file);
+        $filetitle = getDescOrName($file);
 
         //If the current item is a directory, add the link text to the array
         if(is_dir($path) && !in_array($file, $hide_folders)) {
@@ -111,7 +146,7 @@ function getImgList() {
     foreach(getFullDirList() as $file) {
         $path = $dir . "/" . $file;
         $webpath = substr($path, 2, strlen($path) - 2);
-        $filetitle = getTitle($file);
+        $filetitle = getDescOrName($file);
 
         //If the current item is an image, add a the link text to the array
         if( isImage($file)) {
@@ -204,7 +239,7 @@ function getFile() {
                 $url = $path . "/sp_resize.php?source=" . $resize_file;
             }
         }
-        $desc = getDescription($current);
+        $desc = getDescOrName($current);
     }
     else {
         $linkType = 'video';
@@ -286,11 +321,6 @@ function sizeMatches($image, $size='thumb') {
     return $match;
 }
 
-function clearCache() {
-    clearThumbCache();
-    clearResizedCache();
-}
-
 function clearThumbCache() {
     global $cachefolder;
     rmdirr($cachefolder);
@@ -305,6 +335,11 @@ function clearResizedCache() {
     @mkdir($cacheresizedfolder, 0755);
     $cache_ini = @fopen($cacheresizedfolder . "/resized_cache.ini","a");
     @fclose($cache_ini);
+}
+
+function clearCache() {
+    clearThumbCache();
+    clearResizedCache();
 }
 
 function rmdirr($dirname) {
@@ -481,7 +516,7 @@ function getBreadCrumbs() {
     foreach($patharr as $folder) {
         $accesskey = "";
         $url = "";
-        $foldername = getTitle($folder);
+        $foldername = getDescOrName($folder);
         if(!(substr($folder, 0, 1) == '.')) {
             $linkpath .= "/$folder";
             if($patharr[count($patharr)-1] != $folder) {
@@ -496,7 +531,7 @@ function getBreadCrumbs() {
                 }
                 $links[] = array(
                     'url' => $url,
-                    'title' => getTitle($folder),
+                    'title' => getDescOrName($folder),
                     'accesskey' => $accesskey,
                     'first' => false,
                     );
@@ -505,7 +540,7 @@ function getBreadCrumbs() {
                 if( ! ($patharr[count($patharr)-1] == '')) {
                     $links[] = array(
                         'url' => "",
-                        'title' => getTitle($folder),
+                        'title' => getDescOrName($folder),
                         'accesskey' => "",
                         'first' => false,
                         );

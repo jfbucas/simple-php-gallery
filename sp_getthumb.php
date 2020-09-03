@@ -8,37 +8,44 @@ $path = pathinfo($source);
 $hash = md5($source);
 
 $original = imagecreatefrom_ext($source);
+$thumb = imagecreatetruecolor($maxthumbwidth,$maxthumbheight);
 
-$xratio = $maxthumbwidth/(imagesx($original));
-$yratio = $maxthumbheight/(imagesy($original));
-
-if($xratio < $yratio) {
-    $thumb = imagecreatetruecolor(
-        $maxthumbwidth,
-        floor(imagesy($original)*$xratio)
+if(imagesx($original) < imagesy($original)) {
+    $cropped = imagecrop(
+        $original,
+        [
+            'x' => 0,
+            'y' => (imagesy($original) - imagesx($original)) / 2,
+            'width' => imagesx($original),
+            'height' => imagesx($original)
+        ]
     );
-}
-else {
-    $thumb = imagecreatetruecolor(
-        floor(imagesx($original)*$yratio),
-        $maxthumbheight
+} else {
+    $cropped = imagecrop(
+        $original,
+        [
+            'x' => (imagesx($original) - imagesy($original)) / 2,
+            'y' => 0,
+            'width' => imagesy($original),
+            'height' => imagesy($original)
+        ]
     );
 }
 
 imagecopyresampled(
     $thumb,
-    $original,
+    $cropped,
     0, 0,
     0, 0,
     imagesx($thumb) + 1, imagesy($thumb) + 1,
-    imagesx($original), imagesy($original)
+    imagesx($cropped), imagesy($cropped)
 );
 imagedestroy($original);
+imagedestroy($cropped);
 
 //Cache the image if caching has been enabled
 if($cachethumbs) {
     imagejpeg($thumb, $cachefolder . "/" . $hash . ".jpg");
-    $descriptions = @parse_ini_file('sp_descriptions.ini',true);
     $cache_ini = @parse_ini_file($cachefolder . "/cache.ini",true);
     $thisfolder = str_replace('sp_getthumb.php','',$_SERVER['PHP_SELF']);
     if($modrewrite)
@@ -47,9 +54,9 @@ if($cachethumbs) {
         $url = $thisfolder . 'sp_index.php?file=' . $source;
 
     $cache_ini[$hash]['src'] = $thisfolder . $cachefolder . '/' . $hash . '.jpg';
-    $cache_ini[$hash]['alt'] = getDescription($path['basename']);
+    $cache_ini[$hash]['alt'] = getDescOrName($path['basename']);
     $cache_ini[$hash]['url'] = $url;
-    $cache_ini[$hash]['title'] = getTitle($path['basename']);
+    $cache_ini[$hash]['title'] = getDescOrName($path['basename']);
     $cache_ini[$hash]['size'] = filesize($source);
     write_ini_file($cachefolder . "/cache.ini", $cache_ini);
 }
