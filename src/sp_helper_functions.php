@@ -1,7 +1,7 @@
 <?php
 
 function isImage($file) {
-    return preg_match("/.*(\.JPG|\.jpg|\.GIF|\.gif|\.PNG|\.png|\.JPEG|\.jpeg)/", $file);
+    return preg_match("/.*(\.JPG|\.jpg|\.GIF|\.gif|\.PNG|\.png|\.JPEG|\.jpeg|\.WEBP|\.webp)/", $file);
 }
 
 function getDescOrName($object) {
@@ -285,6 +285,9 @@ function imagecreatefrom_ext($imageFile) {
             case "png":
                 $image = imagecreatefrompng($imageFile);
                 break;
+            case "webp":
+                $image = imagecreatefromwebp($imageFile);
+                break;
             default:
                 break;
         }
@@ -406,7 +409,10 @@ function resizedCacheFilesizeMatch($hash, $filesize) {
 function getPrevAndNextDir() {
     global $modrewrite, $precache, $resize, $hide_folders;
     if(!array_key_exists('dir', $_GET))
-        return;
+        return array(
+            'prev' => ".",
+            'next' => ".",
+        );
 
     $cwd = getCurrentWorkingDirectory();
     $dirOfDir = dirname($_GET['dir']);
