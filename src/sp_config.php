@@ -1,5 +1,8 @@
 <?php
+// Site settings
 $title = 'Nos Photos';
+$icon = 'photo-64x64.png';
+$icontype = 'png';
 
 //Thumbnail Settings
 $maxthumbwidth = 240;
@@ -28,6 +31,7 @@ $hide_folders[] = $cacheresizedfolder;
 
 //Miscellaneous Settings
 $showfolderdetails = true;
-$showimgtitles = true;
+$showimgtitles = false;
+$showimgexifdata = true;
 $alignimages = true;
 ?>

@@ -42,12 +42,6 @@ if(!$cachethumbs)
 if(!$cacheresized)
     clearResizedCache();
 
-//Parse the descriptions file
-$descriptions = @parse_ini_file('sp_descriptions.ini',true);
-if (! $descriptions) {
-    die('Unable to read sp_descriptions.ini file.');
-}
-
 $parts = pathinfo($_SERVER['PHP_SELF']);
 $current_working_directory = $parts['dirname'];
 
@@ -85,6 +79,7 @@ if(array_key_exists('file', $_GET))
         stripslashes($_GET['file'])
     );
     $resize_file = stripslashes($_GET['file']);
+    $disk_file = $_GET['file'];
 }
 else
     $display_file = '';
