@@ -3,6 +3,10 @@ require('sp_config.php');
 
 define("VERSION","1.1");
 
+//Set default lang
+if(!isset($lang))
+    $lang = 'en';
+
 //Create the cache folder if caching is enabled and it does not already exist
 //If the folder cannot be created, disable caching
 if($cachethumbs && !file_exists($cachefolder)) {

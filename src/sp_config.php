@@ -1,6 +1,9 @@
 <?php
 // Site settings
 $title = 'Simple PHP Gallery';
+$lang = 'en';
+
+// Icon
 $icon = 'photo-64x64.png';
 $icontype = 'png';
 

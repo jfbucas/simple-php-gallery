@@ -3,7 +3,7 @@ require('sp_helper_functions.php');
 require('sp_def_vars.php');
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= $lang ?>">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,7 +42,7 @@ require('sp_def_vars.php');
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Voir navigation</span>
+            <span class="sr-only"><?= tr("See navigation") ?></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -56,8 +56,8 @@ require('sp_def_vars.php');
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a accesskey="-" href="<?= $prevNext['prev'] ?>">&laquo; Précédente</a></li>
-            <li><a accesskey="+" href="<?= $prevNext['next'] ?>">Suivante &raquo;</a></li>
+            <li><a accesskey="-" href="<?= $prevNext['prev'] ?>">&laquo; <?= tr("Previous") ?></a></li>
+            <li><a accesskey="+" href="<?= $prevNext['next'] ?>"><?= tr("Next") ?> &raquo;</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -67,7 +67,7 @@ require('sp_def_vars.php');
 
         <div class="row breadcrumbs">
             <div class="col-lg-12">
-            <strong>Vous voyez :</strong>
+            <strong><?= tr("You're seeing:") ?></strong>
                 <?php foreach( getBreadCrumbs() as $link): ?>
                     <?php if( ! $link['first']): ?>&raquo;<?php endif; ?>
                     <a href="<?= $link['url'] ?>" <?= $link['accesskey'] ?>><?= $link['title'] ?></a>
@@ -88,7 +88,7 @@ require('sp_def_vars.php');
                                 id="single"
                                 src="<?= $fileInfo['url'] ?>"
                                 alt="<?= $fileInfo['desc'] ?>"
-                                title="Cliquez pour voir en grand"
+                                title="<?= tr("Click to see larger") ?>"
                             />
                         </a>
 
@@ -105,7 +105,7 @@ require('sp_def_vars.php');
                     <?php $exif = getExifData($disk_file) ?>
                     <?php if(count($exif) > 0): ?>
                         <div id="exif-container" class="exif-data">
-                            <h3 id="exif-head">Show EXIF information</h3>
+                            <h3 id="exif-head"><?= tr("Show EXIF information") ?></h3>
                             <div id="exif-data">
                                 <table>
                                     <?php foreach ($exif as $key => $value): ?>
@@ -118,12 +118,12 @@ require('sp_def_vars.php');
                             </div>
                         </div>
                     <?php else: ?>
-                        No EXIF information
+                        <?= tr("No EXIF information") ?>
                     <?php endif; ?>
 
                 <?php else: // video ?>
                     <p><video controls="controls" poster="<?= $fileInfo['video_poster'] ?>"  preload="none" src="<?= $fileInfo['url'] ?>"></p>
-                    <p><a href="<?= $fileInfo['target_url'] ?>">Télécharger la vidéo d'origine</a></p>
+                    <p><a href="<?= $fileInfo['target_url'] ?>"><?= tr("Download original video") ?></a></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -143,7 +143,7 @@ require('sp_def_vars.php');
     <?php if(count($dirList)!=0): //If there are sub-directories, list them. ?>
         <div class="row">
             <div class="col-lg-12">
-            <h4>Sous-répertoires</h4>
+            <h4><?= tr("Subfolders") ?></h4>
             <ul class="subdirs">
                 <?php foreach($dirList as $oneDir): ?>
                 <li>
@@ -151,11 +151,11 @@ require('sp_def_vars.php');
                     <?php if($oneDir['num_images'] != 0 || $oneDir['num_dir'] != 0): ?>
                     (
                         <?php if($oneDir['num_images'] != 0): ?>
-                            <?= $oneDir['num_images'] ?> image<?= ($oneDir['num_images'] == 1) ? '':'s' ?>
+                            <?= $oneDir['num_images'] ?> <?= ($oneDir['num_images'] == 1) ? tr("picture") : tr("pictures") ?>
                         <?php endif; ?>
                         <?php if($oneDir['num_images'] != 0 && $oneDir['num_dir'] != 0): ?>, <?php endif; ?>
                         <?php if($oneDir['num_dir'] != 0): ?>
-                            <?= $oneDir['num_dir'] ?> sous-répertoire<?= ($oneDir['num_dir'] == 1) ? '':'s' ?>
+                            <?= $oneDir['num_dir'] ?> <?= ($oneDir['num_dir'] == 1) ? tr("subfolder") : tr("subfolders") ?>
                         <?php endif; ?>
                     )
                     <?php endif; ?>

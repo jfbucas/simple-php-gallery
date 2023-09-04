@@ -22,7 +22,7 @@ function getDescOrName($object) {
         //Parse the descriptions file
         $infos = @parse_ini_file($desc_file,true);
         if (! $infos) {
-            die('Unable to read sp_descriptions.ini file for $object.');
+            die(tr("Unable to read sp_descriptions.ini file for ") . $object);
         }
         if(array_key_exists($object_name, $infos)) {
             if(array_key_exists('desc', $infos[$object_name]))
@@ -601,5 +601,56 @@ function write_ini_file($path, $assoc_array) {
     }
     fclose($handle);
     return true;
+}
+
+$translate = array(
+    'en' => array(
+        "See navigation" => "See navigation",
+        "You're seeing:" => "You're seeing:",
+        "Previous" => "Previous",
+        "Next" => "Next",
+        "Show EXIF information" => "Show EXIF information",
+        "No EXIF information" => "No EXIF information",
+        "Download original video" => "Download original video",
+        "Click to see larger" => "Click to see larger",
+        "Subfolders" => "Subfolders",
+        "subfolders" => "subfolders",
+        "subfolder" => "subfolder",
+        "pictures" => "pictures",
+        "picture" => "picture",
+        "Unable to read sp_descriptions.ini file for " => "Unable to read sp_descriptions.ini file for ",
+    ),
+    'fr' => array(
+        "See navigation" => "Voir navigation",
+        "You're seeing:" => "Vous voyez :",
+        "Previous" => "Précédente",
+        "Next" => "Suivante",
+        "Show EXIF information" => "Montrer les informations EXIF",
+        "No EXIF information" => "Aucune information EXIF",
+        "Download original video" => "Télécharger la vidéo d'origine",
+        "Click to see larger" => "Cliquez pour voir en grand",
+        "Subfolders" => "Sous-répertoires",
+        "subfolders" => "sous-répertoires",
+        "subfolder" => "sous-répertoire",
+        "pictures" => "photos",
+        "picture" => "photo",
+        "Unable to read sp_descriptions.ini file for " => "Impossible de lire le fichier sp_descriptions.ini pour ",
+    ),
+);
+
+function tr($message) {
+    global $lang, $translate;
+    if(isset($translate[$lang])) {
+        if(isset($translate[$lang][$message])) {
+            $result = $translate[$lang][$message];
+        }
+        else {
+            $result = $message;
+        }
+    }
+    else {
+        $result = $message;
+    }
+    return $result;
 }
 ?>
