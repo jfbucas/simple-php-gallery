@@ -1,6 +1,6 @@
 <?php
 // Site settings
-$title = 'Nos Photos';
+$title = 'Simple PHP Gallery';
 $icon = 'photo-64x64.png';
 $icontype = 'png';
 
