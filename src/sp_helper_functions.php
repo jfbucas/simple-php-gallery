@@ -1,7 +1,8 @@
 <?php
 
 function isImage($file) {
-    return preg_match("/.*(\.JPG|\.jpg|\.GIF|\.gif|\.PNG|\.png|\.JPEG|\.jpeg|\.WEBP|\.webp)/", $file);
+    $file_lower = strtolower($file);
+    return preg_match("/.*\.(gif|jpg|jpeg|png|webp)$/", $file_lower);
 }
 
 function getDescOrName($object) {
