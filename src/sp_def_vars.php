@@ -56,7 +56,7 @@ $hide_folders[] = 'js';
 //If a directory list request was made, parse it into the dir variable.
 $dir='.';
 if(isset($_GET['dir']))
-    $dir = stripslashes($_GET['dir']);
+    $dir = stripslashes(rawurldecode($_GET['dir']));
 
 //Prevent requests for parent directories
 if(substr($dir, 0, 2) == '..')

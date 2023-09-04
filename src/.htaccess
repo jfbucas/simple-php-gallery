@@ -2,6 +2,6 @@ DirectoryIndex sp_index.php
 
 RewriteEngine On 
 
-RewriteRule ^folder/(.*) sp_index.php?dir=./$1
-RewriteRule ^file/(.*) sp_index.php?file=./$1
-RewriteRule ^thumb/(.*) sp_getthumb.php?source=$1
+RewriteRule ^folder/(.*) sp_index.php?dir=./$1 [B]
+RewriteRule ^file/(.*) sp_index.php?file=./$1 [B]
+RewriteRule ^thumb/(.*) sp_getthumb.php?source=$1 [B]

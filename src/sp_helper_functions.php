@@ -117,10 +117,10 @@ function getDirList(){
         //If the current item is a directory, add the link text to the array
         if(is_dir($path) && !in_array($file, $hide_folders)) {
             if($modrewrite) {
-                $url = $cwd . "/folder/" . $webpath;
+                $url = $cwd . "/folder/" . str_replace(' ', '%20', $webpath);
             }
             else {
-                $url = $_SERVER['PHP_SELF'] . "?dir=" . $path;
+                $url = $_SERVER['PHP_SELF'] . "?dir=" . str_replace(' ', '%20', $path);
             }
             if($showfolderdetails) {
                 $num_images = getNumImages($path);
