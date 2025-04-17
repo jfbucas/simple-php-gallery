@@ -22,7 +22,7 @@ if($cacheresized && !file_exists($cacheresizedfolder)) {
 //Parse into the $cache_ini variable.
 if($cachethumbs) {
     $cache_ini = @fopen($cachefolder . "/cache.ini","a");
-    @fclose($cache_ini);
+    //@fclose($cache_ini);
     $cache_ini = @parse_ini_file($cachefolder . "/cache.ini",true);
 }
 
@@ -33,7 +33,7 @@ if($cacheresized) {
         $cacheresizedfolder . "/resized_cache.ini",
         "a"
     );
-    @fclose($resized_cache_ini);
+    //@fclose($resized_cache_ini);
     $resized_cache_ini = @parse_ini_file(
         $cacheresizedfolder . "/resized_cache.ini",
         true
