@@ -3,6 +3,10 @@ require('sp_config.php');
 
 define("VERSION","1.1");
 
+//Set default lang
+if(!isset($lang))
+    $lang = 'en';
+
 //Create the cache folder if caching is enabled and it does not already exist
 //If the folder cannot be created, disable caching
 if($cachethumbs && !file_exists($cachefolder)) {
@@ -42,12 +46,6 @@ if(!$cachethumbs)
 if(!$cacheresized)
     clearResizedCache();
 
-//Parse the descriptions file
-$descriptions = @parse_ini_file('sp_descriptions.ini',true);
-if (! $descriptions) {
-    die('Unable to read sp_descriptions.ini file.');
-}
-
 $parts = pathinfo($_SERVER['PHP_SELF']);
 $current_working_directory = $parts['dirname'];
 
@@ -62,7 +60,7 @@ $hide_folders[] = 'js';
 //If a directory list request was made, parse it into the dir variable.
 $dir='.';
 if(isset($_GET['dir']))
-    $dir = stripslashes($_GET['dir']);
+    $dir = stripslashes(rawurldecode($_GET['dir']));
 
 //Prevent requests for parent directories
 if(substr($dir, 0, 2) == '..')
@@ -85,6 +83,7 @@ if(array_key_exists('file', $_GET))
         stripslashes($_GET['file'])
     );
     $resize_file = stripslashes($_GET['file']);
+    $disk_file = $_GET['file'];
 }
 else
     $display_file = '';
